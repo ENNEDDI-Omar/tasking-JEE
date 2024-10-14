@@ -34,10 +34,10 @@ public class TestUserServlet extends HttpServlet {
                 showAddForm(request, response);
                 break;
             case "/edit":
-               // showEditForm(request, response);
+                showEditForm(request, response);
                 break;
             case "/delete":
-               // deleteUser(request, response);
+                deleteUser(request, response);
                 break;
             default:
                 listUsers(request, response);
@@ -55,7 +55,7 @@ public class TestUserServlet extends HttpServlet {
                 addUser(request, response);
                 break;
             case "/edit":
-                //updateUser(request, response);
+                updateUser(request, response);
                 break;
             default:
                 listUsers(request, response);
@@ -88,5 +88,33 @@ public class TestUserServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/users/list");
     }
 
-    // Ajoutez les méthodes pour showEditForm, updateUser, et deleteUser de manière similaire
+    private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long userId = Long.parseLong(request.getParameter("id"));
+        User user = userEJB.findUserById(userId);
+        request.setAttribute("user", user);
+        request.getRequestDispatcher("/WEB-INF/views/users/edit.jsp").forward(request, response);
+    }
+
+    private void updateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long userId = Long.parseLong(request.getParameter("id"));
+        String username = request.getParameter("username");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        User user = userEJB.findUserById(userId);
+        user.setUsername(username);
+        user.setEmail(email);
+        if (password != null && !password.isEmpty()) {
+            user.setPassword(password); // Idéalement, hacher le mot de passe ici
+        }
+
+        userEJB.updateUser(user);
+        response.sendRedirect(request.getContextPath() + "/users/list");
+    }
+
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long userId = Long.parseLong(request.getParameter("id"));
+        userEJB.deleteUser(userId);
+        response.sendRedirect(request.getContextPath() + "/users/list");
+    }
 }

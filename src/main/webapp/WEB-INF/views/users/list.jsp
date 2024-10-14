@@ -7,7 +7,7 @@
 </head>
 <body>
 <h1>User List</h1>
-<table>
+<table border="1">
     <tr>
         <th>ID</th>
         <th>Username</th>
@@ -23,7 +23,7 @@
             <td>${user.role.name}</td>
             <td>
                 <a href="${pageContext.request.contextPath}/users/edit?id=${user.id}">Edit</a>
-                <a href="${pageContext.request.contextPath}/users/delete?id=${user.id}">Delete</a>
+                <a href="${pageContext.request.contextPath}/users/delete?id=${user.id}" onclick="return confirm('Are you sure?')">Delete</a>
             </td>
         </tr>
     </c:forEach>
