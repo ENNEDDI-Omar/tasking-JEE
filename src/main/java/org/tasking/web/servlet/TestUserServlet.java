@@ -8,13 +8,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.tasking.domain.entities.User;
 import org.tasking.domain.entities.Role;
+import org.tasking.ejb.RoleEJB;
 import org.tasking.ejb.UserEJB;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 
 @WebServlet("/users/*")
 public class TestUserServlet extends HttpServlet {
+    @EJB
+    private RoleEJB roleEJB;
     @EJB
     private UserEJB userEJB;
 
@@ -63,20 +65,24 @@ public class TestUserServlet extends HttpServlet {
     private void listUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<User> users = userEJB.findAllUsers();
         request.setAttribute("users", users);
-        request.getRequestDispatcher("/WEB-INF/views/user/list.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/users/list.jsp").forward(request, response);
     }
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/views/user/form.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/users/form.jsp").forward(request, response);
     }
 
     private void addUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String email = request.getParameter("email");
-        Role role = new Role("USER"); // Simplification, vous devriez gérer les rôles correctement
 
-        User newUser = new User(username, email, password, role);
+        Role userRole = roleEJB.findRoleByName("USER");
+        if (userRole == null) {
+            throw new ServletException("Default USER role not found");
+        }
+
+        User newUser = new User(username, email, password, userRole);
         userEJB.createUser(newUser);
 
         response.sendRedirect(request.getContextPath() + "/users/list");
