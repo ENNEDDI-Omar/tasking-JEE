@@ -1,16 +1,18 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Youcode
-  Date: 14/10/2024
-  Time: 17:00
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Title</title>
+    <title>Edit User</title>
 </head>
 <body>
-
+<h1>Edit User</h1>
+<form action="${pageContext.request.contextPath}/users/edit" method="post">
+    <input type="hidden" name="id" value="${user.id}">
+    Username: <input type="text" name="username" value="${user.username}"><br>
+    Email: <input type="email" name="email" value="${user.email}"><br>
+    Password: <input type="password" name="password" placeholder="Leave blank to keep current password"><br>
+    <input type="submit" value="Update User">
+</form>
 </body>
 </html>
