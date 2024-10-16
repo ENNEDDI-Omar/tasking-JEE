@@ -8,13 +8,81 @@
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- Configuration de sécurité -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Protected Area</web-resource-name>
+            <url-pattern>/servlet/TaskServlet</url-pattern>
+            <url-pattern>/servlet/UserServlet</url-pattern>
+            <!-- Ajoutez d'autres URL patterns pour les ressources protégées -->
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>USER</role-name>
+            <role-name>MANAGER</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Public Pages</web-resource-name>
+            <url-pattern>/servlet/auth/RegisterServlet</url-pattern>
+            <url-pattern>/servlet/auth/LoginServlet</url-pattern>
+        </web-resource-collection>
+        <!-- Pas de contrainte d'authentification pour ces pages -->
+    </security-constraint>
+
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>ApplicationRealm</realm-name>
+        <form-login-config>
+            <form-login-page>/WEB-INF/views/auth/login.jsp</form-login-page>
+            <form-error-page>/WEB-INF/views/error/login-error.jsp</form-error-page>
+        </form-login-config>
+    </login-config>
+
+    <security-role>
+        <role-name>USER</role-name>
+    </security-role>
+    <security-role>
+        <role-name>MANAGER</role-name>
+    </security-role>
+
+    <!-- Définition des servlets -->
     <servlet>
-        <servlet-name>TestUserServlet</servlet-name>
-        <servlet-class>org.tasking.web.servlet.TestUserServlet</servlet-class>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>org.tasking.web.servlet.auth.LoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>TestUserServlet</servlet-name>
-        <url-pattern>/users/*</url-pattern>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/servlet/auth/LoginServlet</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>org.tasking.web.servlet.auth.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/servlet/auth/LogoutServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>org.tasking.web.servlet.auth.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/servlet/auth/RegisterServlet</url-pattern>
+    </servlet-mapping>
+
+    <!-- Configuration des pages d'erreur -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/error/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
 
 </web-app>
