@@ -7,7 +7,7 @@ public class UserValidation
     public static boolean isValidUser(User user) {
         return user != null &&
                 AuthValidation.isValidUsername(user.getUsername()) &&
-                AuthValidation.isValidEmail(user.getEmail()) &&
+//                AuthValidation.isValidEmail(user.getEmail()) &&
                 user.getRole() != null;
     }
 }

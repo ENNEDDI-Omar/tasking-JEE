@@ -12,7 +12,7 @@ import org.tasking.domain.entities.User;
 
 import java.io.IOException;
 
-@WebServlet("/servlet/auth/LoginServlet")
+@WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
     @EJB
@@ -20,7 +20,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Afficher la page de login
+
         request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
     }
 

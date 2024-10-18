@@ -21,21 +21,28 @@ public class AuthEJB {
     private UserEJB userEJB;
 
     public void registerUser(String username, String email, String password) throws AuthException {
-        if (AuthValidation.isValidUsername(username) && AuthValidation.isValidEmail(email) && AuthValidation.isValidPassword(password)) {
-            if (userEJB.findUserByUsername(username) != null) {
-                throw new AuthException("Username already exists");
-            }
-            String hashedPassword = hashPassword(password);
-            User user = new User(username, email, hashedPassword);
-            Role userRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
-                    .setParameter("name", "USER")
-                    .getSingleResult();
-            user.setRole(userRole);
-            userEJB.createUser(user);
-        } else {
-            throw new AuthException("Invalid user data");
+        if (!AuthValidation.isValidUsername(username)) {
+            throw new AuthException("Invalid username format");
         }
+        if (!AuthValidation.isValidEmail(email)) {
+            throw new AuthException("Invalid email format");
+        }
+        if (!AuthValidation.isValidPassword(password)) {
+            throw new AuthException("Invalid password format");
+        }
+        if (userEJB.findUserByUsername(username) != null) {
+            throw new AuthException("Username already exists");
+        }
+
+        String hashedPassword = hashPassword(password);
+        User user = new User(username, email, hashedPassword);
+        Role userRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
+                .setParameter("name", "USER")
+                .getSingleResult();
+        user.setRole(userRole);
+        userEJB.createUser(user);
     }
+
 
     public User authenticateUser(String username, String password) throws LoginException {
         User user = userEJB.findUserByUsername(username);

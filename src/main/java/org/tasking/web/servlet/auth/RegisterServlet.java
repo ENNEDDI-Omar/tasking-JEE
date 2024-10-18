@@ -14,7 +14,14 @@ import java.io.IOException;
 public class RegisterServlet extends HttpServlet
 {
     @EJB
-    private AuthEJB userEJB;
+    private AuthEJB authUserEJB;
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        request.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(request, response);
+    }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -23,11 +30,11 @@ public class RegisterServlet extends HttpServlet
         String email = request.getParameter("email");
 
         try {
-            userEJB.registerUser(username, password, email);
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp");
+            authUserEJB.registerUser(username, email, password);
+            response.sendRedirect(request.getContextPath() + "/WEB-INF/views/auth/login.jsp");
         } catch (Exception e) {
             request.setAttribute("error", "Registration failed: " + e.getMessage());
-            request.getRequestDispatcher("/auth/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(request, response);
         }
     }
 }
