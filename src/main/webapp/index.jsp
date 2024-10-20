@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tasking - Home</title>
-    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/ressources/css/output.css">
 </head>
 <body>
 <main class="relative h-screen overflow-hidden bg-white dark:bg-gray-800">
@@ -38,29 +38,31 @@
             </div>
         </div>
     </header>
-    <div class="relative z-20 flex items-center bg-white dark:bg-gray-800">
-        <div class="container relative flex flex-col items-center justify-between px-6 py-8 mx-auto">
-            <div class="flex flex-col">
-                <h1 class="w-full text-4xl font-light text-center text-gray-800 uppercase sm:text-5xl dark:text-white">
-                    Task Management Made Easy
-                </h1>
-                <h2 class="w-full max-w-2xl py-8 mx-auto text-xl font-light text-center text-gray-500 dark:text-white">
-                    Tasking helps you organize, track, and manage your tasks efficiently. Stay productive and never miss a deadline again.
-                </h2>
-                <div class="flex items-center justify-center mt-4">
-                    <a href="${pageContext.request.contextPath}/register" class="px-4 py-2 mr-4 text-white uppercase bg-gray-800 border-2 border-transparent text-md hover:bg-gray-900">
-                        Get started
-                    </a>
-                    <a href="${pageContext.request.contextPath}/login" class="px-4 py-2 text-gray-800 uppercase bg-transparent border-2 border-gray-800 dark:text-white hover:bg-gray-800 hover:text-white text-md">
-                        Login
-                    </a>
-                </div>
-            </div>
-            <div class="relative block w-full mx-auto mt-6 md:mt-0">
-                <img src="${pageContext.request.contextPath}/ressources/images/tsk1.jpg" alt="Task Management" class="max-w-xs m-auto md:max-w-2xl"/>
+
+    <section class="min-h-80 relative flex flex-1 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-100 py-16 shadow-lg md:py-20 xl:py-48">
+        <!-- image - start -->
+        <img src="${pageContext.request.contextPath}/ressources/images/tsk1.jpg" loading="lazy" alt="Photo by Fakurian Design"
+             class="absolute inset-0 h-full w-full object-cover object-center" />
+        <!-- image - end -->
+        <!-- overlay - start -->
+        <div class="absolute inset-0  mix-blend-multiply"></div>
+        <!-- overlay - end -->
+        <!-- text start -->
+        <div class="relative flex flex-col items-center p-4 sm:max-w-xl">
+            <p class="mb-4 text-center text-lg text-gray-200 sm:text-xl md:mb-8">Task Management Made Easy</p>
+            <h1 class="mb-8 text-center text-4xl font-bold text-white sm:text-5xl md:mb-12 md:text-6xl">
+                Tasking
+            </h1>
+            <div class="flex w-full flex-col gap-2.5 sm:flex-row sm:justify-center">
+                <a href="${pageContext.request.contextPath}/servlet/auth/LoginServlet"
+                   class="inline-block rounded-lg bg-red-600 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-indigo-300 transition duration-100 hover:bg-green-600 focus-visible:ring active:text-gray-700 md:text-base">Login</a>
+                <a href="${pageContext.request.contextPath}/servlet/auth/RegisterServlet"
+                   class="inline-block rounded-lg bg-green-600 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-indigo-300 transition duration-100 hover:bg-red-600 focus-visible:ring active:bg-indigo-700 md:text-base">Start
+                    now</a>
             </div>
         </div>
-    </div>
+        <!-- text end -->
+    </section>
 </main>
 
 <!-- Votre fichier JavaScript -->

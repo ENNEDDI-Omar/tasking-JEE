@@ -24,24 +24,24 @@ public class LoginServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        try {
-            User user = authEJB.authenticateUser(username, password);
-
-            // Authentification réussie
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-
-            // Rediriger vers la page d'accueil ou le tableau de bord
-            response.sendRedirect(request.getContextPath() + "/servlet/TaskServlet");
-        } catch (Exception e) {
-            // Authentification échouée
-            request.setAttribute("errorMessage", "Invalid username or password");
-            request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
-        }
-    }
+//    @Override
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        String username = request.getParameter("username");
+//        String password = request.getParameter("password");
+//
+//        try {
+//            User user = authEJB.authenticateUser(username, password);
+//
+//            // Authentification réussie
+//            HttpSession session = request.getSession();
+//            session.setAttribute("user", user);
+//
+//            // Rediriger vers la page d'accueil ou le tableau de bord
+//            response.sendRedirect(request.getContextPath() + "/servlet/TaskServlet");
+//        } catch (Exception e) {
+//            // Authentification échouée
+//            request.setAttribute("errorMessage", "Invalid username or password");
+//            request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
+//        }
+//    }
 }

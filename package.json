@@ -1,0 +1,11 @@
+{
+  "name": "tasking-app",
+  "version": "1.0.0",
+  "scripts": {
+    "build-css": "tailwindcss -i ./src/main/webapp/ressources/css/input.css -o ./src/main/webapp/ressources/css/output.css --minify",
+    "watch-css": "tailwindcss -i ./src/main/webapp/ressources/css/input.css -o ./src/main/webapp/ressources/css/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.0"
+  }
+}

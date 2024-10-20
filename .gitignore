@@ -36,3 +36,17 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Ignorer node_modules
+/node_modules/
+
+# Ignorer les fichiers générés par npm
+package-lock.json
+
+# Ignorer le CSS généré par Tailwind (si vous ne voulez pas le versionner)
+/src/main/webapp/ressources/css/output.css
+
+# Ignorer les fichiers de logs npm
+npm-debug.log
+yarn-debug.log
+yarn-error.log

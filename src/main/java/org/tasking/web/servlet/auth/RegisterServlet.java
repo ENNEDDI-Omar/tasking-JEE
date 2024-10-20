@@ -31,11 +31,12 @@ public class RegisterServlet extends HttpServlet
 
         try {
             authUserEJB.registerUser(username, email, password);
-            response.sendRedirect(request.getContextPath() + "/WEB-INF/views/auth/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
         } catch (Exception e) {
             request.setAttribute("error", "Registration failed: " + e.getMessage());
             request.getRequestDispatcher("/WEB-INF/views/auth/register.jsp").forward(request, response);
         }
     }
+
 }
 
