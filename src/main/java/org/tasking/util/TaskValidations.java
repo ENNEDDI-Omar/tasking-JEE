@@ -1,6 +1,7 @@
 package org.tasking.util;
 
 import org.tasking.domain.entities.Task;
+import org.tasking.domain.entities.Tag;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class TaskValidations {
         }
 
         if (!isValidTags(task.getTags())) {
-            errors.add("Invalid tags: must have at least one tag and no more than 5 tags");
+            errors.add("Invalid tags: must have at least two tags and no more than 5 tags");
         }
 
         if (task.getAssignedUser() == null) {
@@ -47,7 +48,7 @@ public class TaskValidations {
         return dueDate != null && dueDate.isAfter(LocalDateTime.now());
     }
 
-    public static boolean isValidTags(List<String> tags) {
-        return tags != null && !tags.isEmpty() && tags.size() <= 5;
+    public static boolean isValidTags(List<Tag> tags) {
+        return tags != null && tags.size() >= 2 && tags.size() <= 5;
     }
 }
