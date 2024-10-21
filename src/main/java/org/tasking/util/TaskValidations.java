@@ -24,7 +24,7 @@ public class TaskValidations {
             errors.add("Invalid due date: must be in the future");
         }
 
-        if (!isValidTags(task.getTags()) {
+        if (!isValidTags(task.getTags())) {
             errors.add("Invalid tags: must have at least one tag and no more than 5 tags");
         }
 
