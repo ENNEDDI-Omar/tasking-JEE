@@ -19,18 +19,23 @@ public class TaskEJB {
     @PersistenceContext
     private EntityManager em;
 
-    public Task createTask(Task task, User creator) throws TaskException {
+    public Task createTask(Task task, User creator) throws TaskException
+    {
         if (!"MANAGER".equals(creator.getRole().getName())) {
             throw new TaskException("Only managers can create tasks");
         }
-
         List<String> errors = TaskValidations.validateTask(task);
         if (!errors.isEmpty()) {
             throw new TaskException(String.join(", ", errors));
         }
-
+        if (task.getCreationDate().isBefore(LocalDateTime.now())) {
+            throw new TaskException("Task cannot be created in the past");
+        }
         if (task.getDueDate().isAfter(LocalDateTime.now().plusDays(3))) {
             throw new TaskException("Task due date cannot be more than 3 days in the future");
+        }
+        if (task.getTags().size() < 2 || task.getTags().size() > 5) {
+            throw new TaskException("A task must have between 2 and 5 tags");
         }
 
         task.setCreatedBy(creator);
@@ -51,6 +56,20 @@ public class TaskEJB {
         }
 
         task.setAssignedUser(assignee);
+        return em.merge(task);
+    }
+
+    public Task assignTaskToSelf(Long taskId, User user) throws TaskException {
+        Task task = em.find(Task.class, taskId);
+        if (task == null) {
+            throw new TaskException("Task not found");
+        }
+
+        if (task.getAssignedUser() != null) {
+            throw new TaskException("This task is already assigned");
+        }
+
+        task.setAssignedUser(user);
         return em.merge(task);
     }
 
@@ -89,15 +108,20 @@ public class TaskEJB {
         }
 
         if (!"MANAGER".equals(user.getRole().getName())) {
-            // Implement token logic here
-            // Check if user has enough tokens
-            // Deduct a token if the operation is successful
-            // Throw InsufficientTokensException if not enough tokens
+            if (!user.hasEnoughReplaceTokens()) {
+                throw new TaskException("Insufficient tokens to replace task");
+            }
+            user.useReplaceToken();
+            em.merge(user);  // Mise à jour de l'utilisateur dans la base de données
         }
 
         List<String> errors = TaskValidations.validateTask(newTask);
         if (!errors.isEmpty()) {
             throw new TaskException(String.join(", ", errors));
+        }
+
+        if (newTask.getDueDate().isAfter(LocalDateTime.now().plusDays(3))) {
+            throw new TaskException("Task due date cannot be more than 3 days in the future");
         }
 
         existingTask.setTitle(newTask.getTitle());
@@ -115,13 +139,29 @@ public class TaskEJB {
             throw new TaskException("Task not found");
         }
 
-        if (!"MANAGER".equals(user.getRole().getName()) && !task.getCreatedBy().equals(user)) {
-            // Implement token logic for deletion
-            // Check if user has enough tokens for deletion
-            // Deduct a token if the operation is successful
-            // Don't deduct token if the user is deleting their own task
+        if (!"MANAGER".equals(user.getRole().getName())) {
+            if (!task.getCreatedBy().equals(user)) {
+                if (!user.hasEnoughDeleteTokens()) {
+                    throw new TaskException("Insufficient tokens to delete task");
+                }
+                user.useDeleteToken();
+                em.merge(user);  // Mise à jour de l'utilisateur dans la base de données
+            }
         }
 
         em.remove(task);
     }
+
+
+
+    public void markTasksAsUnfinished() {
+        LocalDateTime now = LocalDateTime.now();
+        em.createQuery("UPDATE Task t SET t.status = :unfinished WHERE t.status != :done AND t.dueDate < :now")
+                .setParameter("unfinished", TaskStatus.TODO)
+                .setParameter("done", TaskStatus.DONE)
+                .setParameter("now", now)
+                .executeUpdate();
+    }
+
+
 }

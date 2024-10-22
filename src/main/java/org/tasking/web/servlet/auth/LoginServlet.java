@@ -19,29 +19,18 @@ public class LoginServlet extends HttpServlet {
     private AuthEJB authEJB;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        if (request.getUserPrincipal() != null) {
+            String role = request.isUserInRole("MANAGER") ? "manager" : "user";
+            String redirectUrl = role.equals("manager") ? "/manager/dashboard" : "/user/tasks";
+            response.sendRedirect(request.getContextPath() + redirectUrl);
+            return;
+        }
 
         request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
     }
 
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        String username = request.getParameter("username");
-//        String password = request.getParameter("password");
-//
-//        try {
-//            User user = authEJB.authenticateUser(username, password);
-//
-//            // Authentification réussie
-//            HttpSession session = request.getSession();
-//            session.setAttribute("user", user);
-//
-//            // Rediriger vers la page d'accueil ou le tableau de bord
-//            response.sendRedirect(request.getContextPath() + "/servlet/TaskServlet");
-//        } catch (Exception e) {
-//            // Authentification échouée
-//            request.setAttribute("errorMessage", "Invalid username or password");
-//            request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
-//        }
-//    }
+
 }

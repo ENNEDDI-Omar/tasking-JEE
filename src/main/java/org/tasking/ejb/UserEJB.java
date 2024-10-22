@@ -7,6 +7,8 @@ import jakarta.persistence.PersistenceContext;
 import org.tasking.domain.entities.User;
 import org.tasking.exceptions.UserException;
 import org.tasking.util.UserValidation;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -55,6 +57,27 @@ public class UserEJB {
             em.remove(user);
         } else {
             throw new UserException("User not found");
+        }
+    }
+
+    public void resetUserTokens() {
+        LocalDateTime now = LocalDateTime.now();
+        List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
+
+        for (User user : users) {
+            boolean updated = false;
+            if (user.getLastTokenReset() == null || user.getLastTokenReset().isBefore(now.minusDays(1))) {
+                user.setReplaceTokens(2);  // Reset replace tokens daily
+                updated = true;
+            }
+            if (user.getLastTokenReset() == null || user.getLastTokenReset().isBefore(now.minusMonths(1))) {
+                user.setDeleteTokens(1);   // Reset delete token monthly
+                updated = true;
+            }
+            if (updated) {
+                user.setLastTokenReset(now);
+                em.merge(user);
+            }
         }
     }
 

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -23,8 +25,17 @@ public class User {
     private String email;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false) // clé étrangère pour la relation avec Role
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    @Column(name = "replace_tokens")
+    private int replaceTokens;
+
+    @Column(name = "delete_tokens")
+    private int deleteTokens;
+
+    @Column(name = "last_token_reset")
+    private LocalDateTime lastTokenReset;
 
     public User() {}
 
@@ -79,6 +90,36 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public boolean hasEnoughReplaceTokens() {
+        return this.replaceTokens > 0;
+    }
+
+    public boolean hasEnoughDeleteTokens() {
+        return this.deleteTokens > 0;
+    }
+
+    public void useReplaceToken() {
+        if (this.replaceTokens > 0) {
+            this.replaceTokens--;
+        } else {
+            throw new IllegalStateException("No replace tokens available");
+        }
+    }
+
+    public void useDeleteToken() {
+        if (this.deleteTokens > 0) {
+            this.deleteTokens--;
+        } else {
+            throw new IllegalStateException("No delete tokens available");
+        }
+    }
+
+    public void resetTokens() {
+        this.replaceTokens = 2;  // 2 jetons de remplacement par jour
+        this.deleteTokens = 1;   // 1 jeton de suppression par mois
+        this.lastTokenReset = LocalDateTime.now();
     }
 
     @Override
