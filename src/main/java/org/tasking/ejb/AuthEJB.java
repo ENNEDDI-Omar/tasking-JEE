@@ -43,7 +43,7 @@ public class AuthEJB {
         User user = new User(username, email, hashedPassword);
 
         Role userRole = em.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
-                .setParameter("name", "MANAGER")  // Changé à USER par défaut
+                .setParameter("name", "USER")  // Changé à USER par défaut
                 .getSingleResult();
         user.setRole(userRole);
         user.initializeTokens();  // Initialise les tokens selon le rôle
