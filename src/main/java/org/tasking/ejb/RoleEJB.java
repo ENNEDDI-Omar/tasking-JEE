@@ -35,6 +35,10 @@ public class RoleEJB
         }
     }
 
+    public Role findRoleById(Long id) {
+        return em.find(Role.class, id);
+    }
+
     public Role createRole(String name)
     {
         Role role = new Role(name);

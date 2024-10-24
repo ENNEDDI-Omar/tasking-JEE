@@ -10,8 +10,31 @@
             <ul class="flex space-x-4">
                 <c:choose>
                     <c:when test="${user.role.name == 'MANAGER'}">
-                        <li><a href="${pageContext.request.contextPath}/manager/dashboard" class="hover:text-gray-300">Dashboard</a></li>
-                        <li><a href="${pageContext.request.contextPath}/user/tasks" class="hover:text-gray-300">Tasks</a></li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/manager/dashboard"
+                               class="hover:text-gray-300">Dashboard</a>
+                        </li>
+                        <li class="relative group">
+                            <a href="${pageContext.request.contextPath}/manager/users"
+                               class="hover:text-gray-300">Users</a>
+                            <div class="absolute hidden group-hover:block bg-white text-black p-2 rounded shadow-lg">
+                                <a href="${pageContext.request.contextPath}/manager/users/create"
+                                   class="block px-4 py-2 hover:bg-gray-100">Create Users</a>
+                            </div>
+                        </li>
+                        <li class="relative group">
+                            <a href="${pageContext.request.contextPath}/manager/tasks"
+                               class="hover:text-gray-300">Tasks</a>
+                            <div class="absolute hidden group-hover:block bg-white text-black p-2 rounded shadow-lg">
+                                <a href="${pageContext.request.contextPath}/manager/tasks/create"
+                                   class="block px-4 py-2 hover:bg-gray-100">Create Tasks</a>
+                            </div>
+                        </li>
+                        <li class="relative group">
+                            <a href="${pageContext.request.contextPath}/manager/tags"
+                               class="hover:text-gray-300">Tags</a>
+
+                        </li>
                     </c:when>
                     <c:otherwise>
                         <li><a href="${pageContext.request.contextPath}/user/tasks" class="hover:text-gray-300">My Tasks</a></li>
@@ -20,6 +43,7 @@
                 <li><a href="${pageContext.request.contextPath}/user/profile" class="hover:text-gray-300">Profile</a></li>
                 <li>
                     <form action="${pageContext.request.contextPath}/logout" method="post" class="inline">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
                             Logout
                         </button>

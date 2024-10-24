@@ -32,32 +32,25 @@
                         </div>
                         <% } %>
 
-                        <form action="j_security_check" method="post" class="">
+                        <form action="${pageContext.request.contextPath}/login" method="post">
                             <div class="mb-4">
-                                <input
-                                        type="text"
-                                        class="w-full bg-blue-50 dark:bg-slate-700 min-h-[48px] leading-10 px-4 p-2 rounded-lg outline-none border border-transparent focus:border-blue-600"
-                                        id="j_username"
-                                        name="j_username"
-                                        placeholder="Enter Username"
-                                        required
-                                />
+                                <input type="text"
+                                       name="username"
+                                       class="w-full bg-blue-50 dark:bg-slate-700 px-4 py-3 rounded-lg"
+                                       placeholder="Username"
+                                       required>
                             </div>
-                            <div class="mb-4">
-                                <input
-                                        type="password"
-                                        class="w-full bg-blue-50 dark:bg-slate-700 min-h-[48px] leading-10 px-4 p-2 rounded-lg outline-none border border-transparent focus:border-blue-600"
-                                        id="j_password"
-                                        name="j_password"
-                                        placeholder="Enter Password"
-                                        required
-                                />
+                            <div class="mb-6">
+                                <input type="password"
+                                       name="password"
+                                       class="w-full bg-blue-50 dark:bg-slate-700 px-4 py-3 rounded-lg"
+                                       placeholder="Password"
+                                       required>
                             </div>
-                            <div class="mb-4">
-                                <input type="checkbox" class="mr-2" id="remember-me" />
-                                <label class="font-normal" for="remember-me">Remember me</label>
-                            </div>
-                            <button type="submit" class="bg-indigo-900 text-white py-3 px-6 rounded w-full">Log In</button>
+                            <button type="submit"
+                                    class="w-full bg-indigo-900 text-white py-3 rounded-lg">
+                                Login
+                            </button>
                         </form>
                         <button class="hover:text-blue-600 py-2 px-4 rounded-lg w-full">Forgot your password?</button>
                     </div>

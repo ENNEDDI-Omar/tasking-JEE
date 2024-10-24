@@ -4,11 +4,15 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import org.tasking.domain.entities.Role;
+import org.tasking.domain.entities.TaskChangeRequest;
 import org.tasking.domain.entities.User;
 import org.tasking.exceptions.UserException;
 import org.tasking.util.UserValidation;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -41,8 +45,16 @@ public class UserEJB {
     }
 
     public List<User> findAllUsers() {
-        return em.createQuery("SELECT u FROM User u", User.class).getResultList();
+        try {
+            List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
+            System.out.println("Users found: " + users.size());
+            return users;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
+
 
     public User updateUser(User user) throws UserException {
         if (UserValidation.isValidUser(user)) {
@@ -60,24 +72,60 @@ public class UserEJB {
         }
     }
 
+    public List<Role> getAllRoles() {
+        return em.createQuery("SELECT r FROM Role r", Role.class).getResultList();
+    }
+
     public void resetUserTokens() {
         LocalDateTime now = LocalDateTime.now();
-        List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
+        List<User> users = em.createQuery(
+                        "SELECT u FROM User u WHERE u.role.name = :roleName", User.class)
+                .setParameter("roleName", "USER")
+                .getResultList();
 
         for (User user : users) {
             boolean updated = false;
-            if (user.getLastTokenReset() == null || user.getLastTokenReset().isBefore(now.minusDays(1))) {
-                user.setReplaceTokens(2);  // Reset replace tokens daily
+
+            if (user.getLastTokenReset() == null ||
+                    user.getLastTokenReset().isBefore(now.minusDays(1))) {
+                user.setReplaceTokens(2);
                 updated = true;
             }
-            if (user.getLastTokenReset() == null || user.getLastTokenReset().isBefore(now.minusMonths(1))) {
-                user.setDeleteTokens(1);   // Reset delete token monthly
+
+            if (user.getLastTokenReset() == null ||
+                    user.getLastTokenReset().isBefore(now.minusMonths(1))) {
+                user.setDeleteTokens(1);
                 updated = true;
             }
+
             if (updated) {
                 user.setLastTokenReset(now);
                 em.merge(user);
             }
+        }
+    }
+
+    public void checkAndUpdatePendingTokens() {
+        LocalDateTime twelveHoursAgo = LocalDateTime.now().minusHours(12);
+
+        List<TaskChangeRequest> pendingRequests = em.createQuery(
+                        "SELECT r FROM TaskChangeRequest r WHERE r.status = :status " +
+                                "AND r.requestDate < :date " +
+                                "AND r.requestedBy.role.name = :roleName",
+                        TaskChangeRequest.class)
+                .setParameter("status", "PENDING")
+                .setParameter("date", twelveHoursAgo)
+                .setParameter("roleName", "USER")
+                .getResultList();
+
+        for (TaskChangeRequest request : pendingRequests) {
+            User user = request.getRequestedBy();
+            if ("USER".equals(user.getRole().getName())) {
+                user.setReplaceTokens(user.getReplaceTokens() * 2);
+                em.merge(user);
+            }
+            request.setStatus("EXPIRED");
+            em.merge(request);
         }
     }
 

@@ -11,9 +11,16 @@ public class AppInitializer
 {
     @EJB
     private RoleEJB roleEJB;
+    @EJB
+    private TagEJB tagEJB;
 
     @PostConstruct
-    public void init() {
+    public void init()
+    {
         roleEJB.init();
+        tagEJB.init();
     }
+
+
+
 }

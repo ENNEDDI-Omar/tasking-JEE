@@ -29,10 +29,10 @@ public class User {
     private Role role;
 
     @Column(name = "replace_tokens")
-    private int replaceTokens;
+    private Integer replaceTokens = 0;  // Initialisation par défaut à 0
 
     @Column(name = "delete_tokens")
-    private int deleteTokens;
+    private Integer deleteTokens = 0;   // Initialisation par défaut à 0
 
     @Column(name = "last_token_reset")
     private LocalDateTime lastTokenReset;
@@ -92,34 +92,34 @@ public class User {
         this.role = role;
     }
 
+    public void initializeTokens() {
+        if (this.role != null && "USER".equals(this.role.getName())) {
+            this.replaceTokens = 2;
+            this.deleteTokens = 1;
+            this.lastTokenReset = LocalDateTime.now();
+        }
+    }
+
     public boolean hasEnoughReplaceTokens() {
-        return this.replaceTokens > 0;
+        return "USER".equals(this.role.getName()) && this.replaceTokens > 0;
     }
 
     public boolean hasEnoughDeleteTokens() {
-        return this.deleteTokens > 0;
+        return "USER".equals(this.role.getName()) && this.deleteTokens > 0;
     }
 
     public void useReplaceToken() {
-        if (this.replaceTokens > 0) {
-            this.replaceTokens--;
-        } else {
-            throw new IllegalStateException("No replace tokens available");
+        if (!hasEnoughReplaceTokens()) {
+            throw new IllegalStateException("No replace tokens available or not a USER");
         }
+        this.replaceTokens--;
     }
 
     public void useDeleteToken() {
-        if (this.deleteTokens > 0) {
-            this.deleteTokens--;
-        } else {
-            throw new IllegalStateException("No delete tokens available");
+        if (!hasEnoughDeleteTokens()) {
+            throw new IllegalStateException("No delete tokens available or not a USER");
         }
-    }
-
-    public void resetTokens() {
-        this.replaceTokens = 2;  // 2 jetons de remplacement par jour
-        this.deleteTokens = 1;   // 1 jeton de suppression par mois
-        this.lastTokenReset = LocalDateTime.now();
+        this.deleteTokens--;
     }
 
     @Override

@@ -19,27 +19,32 @@ public class TaskEJB {
     @PersistenceContext
     private EntityManager em;
 
-    public Task createTask(Task task, User creator) throws TaskException
-    {
+    public Task createTask(Task task, User creator) throws TaskException {
+        // Première validation : permissions du créateur
         if (!"MANAGER".equals(creator.getRole().getName())) {
             throw new TaskException("Only managers can create tasks");
         }
+
+
+        task.setCreationDate(LocalDateTime.now());
+        task.setCreatedBy(creator);
+
+        // Validation complète de la tâche
         List<String> errors = TaskValidations.validateTask(task);
         if (!errors.isEmpty()) {
             throw new TaskException(String.join(", ", errors));
         }
-        if (task.getCreationDate().isBefore(LocalDateTime.now())) {
-            throw new TaskException("Task cannot be created in the past");
-        }
+
+        // Vérification de la date d'échéance (3 jours max)
         if (task.getDueDate().isAfter(LocalDateTime.now().plusDays(3))) {
             throw new TaskException("Task due date cannot be more than 3 days in the future");
         }
+
+        // Vérification des tags
         if (task.getTags().size() < 2 || task.getTags().size() > 5) {
             throw new TaskException("A task must have between 2 and 5 tags");
         }
 
-        task.setCreatedBy(creator);
-        task.setCreationDate(LocalDateTime.now());
         task.setStatus(TaskStatus.TODO);
         em.persist(task);
         return task;
@@ -97,6 +102,10 @@ public class TaskEJB {
                 .getResultList();
     }
 
+    public Task findTaskById(Long id) {
+        return em.find(Task.class, id);
+    }
+
     public List<Task> getAllTasks() {
         return em.createQuery("SELECT t FROM Task t", Task.class).getResultList();
     }
@@ -133,6 +142,10 @@ public class TaskEJB {
         return em.merge(existingTask);
     }
 
+    public Task updateTask(Task task) {
+        return em.merge(task);
+    }
+
     public void deleteTask(Long taskId, User user) throws TaskException {
         Task task = em.find(Task.class, taskId);
         if (task == null) {
@@ -150,6 +163,13 @@ public class TaskEJB {
         }
 
         em.remove(task);
+    }
+
+    public void deleteTaskById(Long taskId) {
+        Task task = findTaskById(taskId);
+        if (task != null) {
+            em.remove(task);
+        }
     }
 
 

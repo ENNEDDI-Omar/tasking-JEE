@@ -6,22 +6,27 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "tags")
-public class Tag
-{
+@Getter
+@Setter
+public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column
+    private String color;
+
     @ManyToMany(mappedBy = "tags")
-    private List<Task> tasks = new ArrayList<>();
+    private Set<Task> tasks = new HashSet<>();
 
     public Tag() {
     }

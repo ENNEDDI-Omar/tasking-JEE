@@ -4,6 +4,11 @@
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
     <persistence-unit name="TaskingPU" transaction-type="JTA">
         <jta-data-source>java:jboss/datasources/TaskingDS</jta-data-source>
+        <class>org.tasking.domain.entities.User</class>
+        <class>org.tasking.domain.entities.Role</class>
+        <class>org.tasking.domain.entities.Task</class>
+        <class>org.tasking.domain.entities.Tag</class>
+        <class>org.tasking.domain.entities.TaskChangeRequest</class>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
